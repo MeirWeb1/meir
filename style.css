@@ -259,8 +259,8 @@ header {
 }
 
 .video-card {
-    max-width: 900px;
-    width: 100%;
+    max-width: 500px; /* במקום 950px, נעשה את זה צר יותר שיתאים לסרטון */
+    margin: 0 auto;
     overflow: hidden;
     padding: 0 !important;
 }
@@ -268,8 +268,7 @@ header {
 .video-wrapper {
     position: relative;
     width: 100%;
-    height: 450px;
-    overflow: hidden;
+    height: 600px; /* גובה שמתאים לסרטון אנכי */
 }
 
 .portfolio-video {
