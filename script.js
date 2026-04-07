@@ -94,7 +94,7 @@ function scrollToContact() {
 function sendToWhatsApp() {
     const nameInput = document.getElementById('userName');
     const name = nameInput.value.trim();
-    const phone = "0543821419";
+    const phone = "+972543821419";
     
     // ניסוח הודעה שיווקית ומניעה לפעולה
     const message = encodeURIComponent(`היי! ראיתי את האתר שלך. אני מעוניין בדף נחיתה מקצועי בקוד ב-250₪. השם שלי הוא: ${name}`);
