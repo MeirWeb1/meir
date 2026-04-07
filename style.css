@@ -274,7 +274,9 @@ header {
 .portfolio-video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* זה יגרום לוידאו להימתח ולמלא את כל התיבה */
+    object-position: center center; /* זה יתמקד במרכז הוידאו ויחתוך את השוליים */
+    background-color: #030712; /* צבע רקע למקרה שהוידאו לא נטען */
 }
 
 .video-overlay {
