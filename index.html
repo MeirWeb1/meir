@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-End Landing Pages | בניית דפי נחיתה בקוד נקי</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&family=Heebo:wght@100;300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="starsCanvas"></canvas>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">CODED<span>.</span>PAGES</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#about" class="active">למה קוד?</a></li>
+                    <li><a href="#portfolio">דוגמאות</a></li>
+                    <li><a href="#process">התהליך</a></li>
+                    <li><a href="#faq">שאלות</a></li>
+                </ul>
+            </nav>
+            <button onclick="scrollToContact()" class="cta-header">להזמנה מהירה</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="glow-text">PREMIUM CODE</div>
+                <h1>אנחנו לא בונים בוורדפרס.<br> אנחנו <span class="cyan-neon">כותבים קוד.</span></h1>
+                <p>דף נחיתה בעיצוב נקי, מהיר בטירוף, ומותאם אישית אליכם - בקוד נקי (HTML/CSS/JS). המרה מקסימלית במינימום מחיר.</p>
+                <div class="hero-btns">
+                    <button onclick="scrollToContact()" class="btn-primary">התחילו עכשיו ב-250₪</button>
+                    <a href="#portfolio" class="btn-secondary">ראו עבודות</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="abstract-shape"></div>
+            </div>
+        </section>
+
+        <section id="about" class="grid-section">
+            <h2 class="section-title">למה לבחור בדף נחיתה מבוסס קוד?</h2>
+            <div class="grid-container">
+                <div class="grid-item card-glass">
+                    <i class="fas fa-rocket cyan-icon"></i>
+                    <h3>מהירות טעינה פסיכית</h3>
+                    <p>בלי תוספים כבדים, בלי בילדרים איטיים. קוד נקי נטען בחלקיק שנייה.</p>
+                </div>
+                <div class="grid-item card-glass">
+                    <i class="fas fa-fingerprint cyan-icon"></i>
+                    <h3>ייחודיות עיצובית מלאה</h3>
+                    <p>אין תבניות. העיצוב נתפר בדיוק לצרכים המיתוגיים של העסק שלכם.</p>
+                </div>
+                <div class="grid-item card-glass">
+                    <i class="fas fa-search cyan-icon"></i>
+                    <h3>ידידותי ל-Google (SEO)</h3>
+                    <p>קוד סמנטי ונקי עוזר למנועי החיפוש לסרוק את הדף שלכם בקלות רבה יותר.</p>
+                </div>
+            </div>
+        </section>
+
+    <section id="portfolio" class="portfolio-section">
+    <h2 class="section-title">העבודות שלי בשטח</h2>
+    <div class="portfolio-single-container">
+        <div class="portfolio-item card-glass video-card">
+            <div class="video-wrapper">
+                <video autoplay muted loop playsinline class="portfolio-video">
+                    <source src="video1.mp4" type="video/mp4">
+                    הדפדפן שלך לא תומך בוידאו.
+                </video>
+                <div class="video-overlay"></div>
+            </div>
+            <div class="portfolio-details">
+                <h3>פרויקט לדוגמה: דף נחיתה אינטראקטיבי</h3>
+                <p>עיצוב נקי, שילוב וידאו זורם והתאמה מלאה לכל סוגי המכשירים.</p>
+            </div>
+        </div>
+    </div>
+    </section>
+
+        <section id="process" class="process-section">
+            <h2 class="section-title">מה קורה אחרי שמשלמים?</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>1. אפיון קצר בוואטסאפ</h3>
+                    <p>נבין מה המוצר, מה המטרה, ונאסוף חומרים (לוגו, טקסטים).</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>2. עיצוב ופיתוח (עד 6 שעות)</h3>
+                    <p>אני כותב את הקוד, בונה את האנימציות ומתאים למובייל.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>3. סבב תיקונים</h3>
+                    <p>אתם עוברים על הדף, נותנים הערות ואני מדייק את הכל.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>4. האתר באוויר</h3>
+                    <p>אני שולח לכם את הקבצים או עוזר להעלות אותם לשרת.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="contact-card card-glass">
+                <div class="price-header">
+                    <span class="price-label">כל זה רק ב-</span>
+                    <span class="price-value">250₪</span>
+                </div>
+                <h2>מוכנים להביא יותר לקוחות?</h2>
+                <p>השאירו שם ואחזור אליכם בוואטסאפ בהקדם.</p>
+                
+                <div class="form-group">
+                    <input type="text" id="userName" required>
+                    <label>השם המלא שלכם</label>
+                </div>
+                
+                <button onclick="sendToWhatsApp()" class="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> שלחו לי הודעה בוואטסאפ
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Coded Pages | כל הזכויות שמורות.</p>
+        <p>מעוצב ומפותח בקוד נקי.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
