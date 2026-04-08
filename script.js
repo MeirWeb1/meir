@@ -1,3 +1,4 @@
+// הגדרות קנבס לכוכבים
 const canvas = document.getElementById('starsCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -8,8 +9,9 @@ canvas.height = windowHeight;
 
 let particles = [];
 const mouse = { x: null, y: null };
-let fadeTimeout; // משתנה שיחזיק את הטיימר
+let fadeTimeout;
 
+// עדכון גודל קנבס בשינוי חלון
 window.addEventListener('resize', () => {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
@@ -17,35 +19,42 @@ window.addEventListener('resize', () => {
     canvas.height = windowHeight;
 });
 
-// פונקציה שמפעילה/מחזירה את האפקט
+// פונקציות עזר לאפקט
 function showCanvas() {
     canvas.style.opacity = '1';
     canvas.style.display = 'block';
 }
 
-// פונקציה שמתחילה את הדהייה
 function startFade() {
     canvas.style.opacity = '0';
-    // אנחנו לא מוחקים את הקנבס מהדף (remove), רק מסתירים ב-CSS
+    // אחרי סיום הדהייה, מנקים פיזית את הקנבס ומרוקנים את רשימת הכוכבים
+    setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = []; 
+    }, 1000); // 1000ms תואם ל-transition ב-CSS
 }
 
+// לוגיקת תנועת העכבר
 window.addEventListener('mousemove', (e) => {
-    // 1. ברגע שיש תנועה - מראים את הקנבס מיד
-    showCanvas();
+    // אם האפקט כבוי, מנקים את המערך כדי למנוע שאריות
+    if (canvas.style.opacity === '0' || canvas.style.display === 'none') {
+        particles = [];
+    }
     
+    showCanvas();
     mouse.x = e.x;
     mouse.y = e.y;
     
-    // 2. יוצרים חלקיקים
+    // יצירת חלקיקים
     for (let i = 0; i < 2; i++) {
         particles.push(new Particle(mouse.x, mouse.y));
     }
 
-    // 3. מנגנון הדהייה: מבטלים את הטיימר הקודם ומתחילים חדש
+    // רענון טיימר הדהייה
     clearTimeout(fadeTimeout);
     fadeTimeout = setTimeout(() => {
         startFade();
-    }, 2000); // האפקט יתחיל לדעוך אחרי 2 שניות של חוסר תנועה
+    }, 1000); // האפקט יתחיל לדעוך שנייה אחת אחרי הפסקת התנועה
 });
 
 class Particle {
@@ -80,6 +89,7 @@ function animate() {
     for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
+        
         if (particles[i].size <= 0.2) {
             particles.splice(i, 1);
             i--;
@@ -87,23 +97,32 @@ function animate() {
     }
     requestAnimationFrame(animate);
 }
-
 animate();
 
-// פונקציות הממשק (WhatsApp וגלילה) נשארות אותו דבר...
+// --- פונקציות ממשק ---
+
 function scrollToContact() {
     const contactSection = document.getElementById('contact');
     if (contactSection) {
         contactSection.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+            const field = document.getElementById('userName');
+            if(field) field.focus();
+        }, 800);
     }
 }
 
 function sendToWhatsApp() {
     const nameInput = document.getElementById('userName');
     const name = nameInput.value.trim();
+    const phone = "+972543821419";
+    
     if (name === "") {
-        alert("נא להזין שם");
+        nameInput.style.borderColor = "#ef4444";
+        alert("נא להזין שם כדי שנדע איך לקרוא לך הודעה וואטסאפ :)");
         return;
     }
-    window.open(`https://wa.me/972543821419?text=היי, אני ${name}`, '_blank');
+    
+    const message = encodeURIComponent(`היי! ראיתי את האתר שלך. אני מעוניין בדף נחיתה מקצועי בקוד ב-250₪. השם שלי הוא: ${name}`);
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
 }
