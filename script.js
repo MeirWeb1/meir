@@ -13,6 +13,7 @@ const mouse = { x: null, y: null };
 let isEffectActive = true; 
 
 window.addEventListener('resize', () => {
+    if (!canvas.parentNode) return; // בדיקה שהקנבס עדיין קיים
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
     canvas.width = windowWidth;
@@ -23,13 +24,11 @@ window.addEventListener('mousemove', (e) => {
     if (!isEffectActive) return; 
     mouse.x = e.x;
     mouse.y = e.y;
-    // מוסיף חלקיק אחד בכל תזוזה
     particles.push(new Particle(mouse.x, mouse.y));
 });
 
 class Particle {
     constructor(x, y) {
-        // אם לא קיבלנו מיקום, ניצור מיקום רנדומלי (לכוכבי רקע)
         this.x = x || Math.random() * canvas.width;
         this.y = y || Math.random() * canvas.height;
         this.size = Math.random() * 2 + 0.5;
@@ -54,12 +53,14 @@ class Particle {
 }
 
 function animate() {
+    // אם הקנבס הוסר מהדף, נפסיק את הלופ מיד
+    if (!canvas.parentNode) return;
+
     ctx.fillStyle = 'rgba(3, 7, 18, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // 1. יצירת כוכבי רקע באופן קבוע (גם כשלא מזיזים עכבר)
     if (isEffectActive && Math.random() > 0.7) { 
-        particles.push(new Particle()); // יוצר כוכב במיקום רנדומלי
+        particles.push(new Particle());
     }
 
     for (let i = 0; i < particles.length; i++) {
@@ -72,7 +73,6 @@ function animate() {
         }
     }
     
-    // ממשיך את הלופ רק אם האפקט פעיל או שיש עדיין חלקיקים שצריכים להיעלם
     if (isEffectActive || particles.length > 0) {
         requestAnimationFrame(animate);
     }
@@ -110,14 +110,17 @@ function sendToWhatsApp() {
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
 }
 
-// --- מנגנון הדהייה והכיבוי ---
+// --- מנגנון הדהייה והכיבוי הסופי ---
 window.addEventListener('load', () => {
     setTimeout(() => {
-        isEffectActive = false; // מפסיק יצירת כוכבים חדשים
-        canvas.style.opacity = '0'; // דהייה ויזואלית
+        isEffectActive = false; // עוצר יצירת כוכבים חדשים
+        
+        canvas.style.opacity = '0'; // מתחיל דהייה (וודא שיש transition ב-CSS)
         
         setTimeout(() => {
-            canvas.style.display = 'none'; // העלמה מוחלטת מה-DOM
+            // ניקוי סופי ומחיקה מהדף
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.remove(); // מסיר את האלמנט לגמרי מה-HTML
         }, 2000); 
     }, 3000);
 });
