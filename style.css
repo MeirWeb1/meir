@@ -34,11 +34,10 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    pointer-events: none; /* קריטי כדי שלא יפריע ללחיצות */
-    
-    /* כאן השיפור: זמן ארוך יותר ופונקציית מעבר רכה */
-    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0; /* נתחיל במצב מוסתר */
+    pointer-events: none;
+    background-color: transparent; /* חשוב מאוד כדי שלא יהיו כתמים שחורים */
+    opacity: 0;
+    transition: opacity 1.5s ease-out; /* הזמן הזה חייב להתאים ל-1500 ב-JS */
 }
 
 /* טיפוגרפיה כללית */
