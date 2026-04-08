@@ -1,4 +1,4 @@
-// הגדרות קנבס לכוכבים (שחזור ושדרוג התוכנה הקודמת)
+// הגדרות קנבס לכוכבים
 const canvas = document.getElementById('starsCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -10,8 +10,9 @@ canvas.height = windowHeight;
 
 let particles = [];
 const mouse = { x: null, y: null };
+let isEffectActive = true; // משתנה ששולט אם האפקט פעיל
 
-// עדכון גודל קנבס בשינוי גודל חלון
+// עדכון גודל קנבס
 window.addEventListener('resize', () => {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
@@ -19,10 +20,12 @@ window.addEventListener('resize', () => {
     canvas.height = windowHeight;
 });
 
+// יצירת חלקיקים בזמן תזוזה - רק אם האפקט פעיל
 window.addEventListener('mousemove', (e) => {
+    if (!isEffectActive) return; // מפסיק ליצור כוכבים חדשים כשהאפקט כבוי
+    
     mouse.x = e.x;
     mouse.y = e.y;
-    // יצירת חלקיקים בזמן תזוזה (קצת פחות מבעבר כדי לא להכביד)
     for (let i = 0; i < 1; i++) {
         particles.push(new Particle());
     }
@@ -32,98 +35,85 @@ class Particle {
     constructor() {
         this.x = mouse.x;
         this.y = mouse.y;
-        // כוכבים בגדלים שונים
         this.size = Math.random() * 2 + 0.5;
-        // מהירות פיזור
         this.speedX = (Math.random() - 0.5) * 1.5;
         this.speedY = (Math.random() - 0.5) * 1.5;
-        // צבע טורקיז עם שקיפות משתנה
         this.color = `rgba(34, 211, 238, ${Math.random() * 0.7 + 0.3})`;
     }
     update() {
         this.x += this.speedX;
         this.y += this.speedY;
-        // דעיכה חלקה
         if (this.size > 0.1) this.size -= 0.03;
     }
     draw() {
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        // הוספת אפקט זוהר קל
         ctx.shadowBlur = 5;
         ctx.shadowColor = "rgba(34, 211, 238, 0.5)";
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0; // ביטול ה-Shadow לשאר הציורים
+        ctx.shadowBlur = 0;
     }
 }
 
 function animate() {
-    // ניקוי הקנבס עם אפקט "שבילים" (Fading trail)
+    // ניקוי הקנבס
     ctx.fillStyle = 'rgba(3, 7, 18, 0.1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
-        // הסרת חלקיקים קטנים מידי
         if (particles[i].size <= 0.2) {
             particles.splice(i, 1);
             i--;
         }
     }
-    requestAnimationFrame(animate);
+    
+    // ממשיך את הלופ רק אם יש עדיין חלקיקים לצייר או שהאפקט פעיל
+    if (isEffectActive || particles.length > 0) {
+        requestAnimationFrame(animate);
+    }
 }
 animate();
 
 // --- פונקציות ממשק ---
 
-// פונקציה לגלילה חלקה לאיזור יצירת הקשר
 function scrollToContact() {
     const contactSection = document.getElementById('contact');
     if (contactSection) {
         contactSection.scrollIntoView({ behavior: 'smooth' });
-        // פוקוס על שדה השם אחרי הגלילה
         setTimeout(() => {
             document.getElementById('userName').focus();
         }, 800);
     }
 }
 
-// פונקציית וואטסאפ (0543821419)
 function sendToWhatsApp() {
     const nameInput = document.getElementById('userName');
     const name = nameInput.value.trim();
     const phone = "+972543821419";
     
-    // ניסוח הודעה שיווקית ומניעה לפעולה
     const message = encodeURIComponent(`היי! ראיתי את האתר שלך. אני מעוניין בדף נחיתה מקצועי בקוד ב-250₪. השם שלי הוא: ${name}`);
     
     if (name === "") {
-        // הוספת סימון אדום אם השדה ריק
         nameInput.style.borderColor = "#ef4444";
         alert("נא להזין שם כדי שנדע איך לקרוא לך הודעה וואטסאפ :)");
         return;
     }
     
-    // ניקוי סימון אדום
     nameInput.style.borderColor = "var(--border-glass)";
-    
-    // פתיחת וואטסאפ בחלון חדש
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
 }
 
-// פונקציה שמתבצעת ברגע שהדף מסיים להיטען
+// --- מנגנון הדהייה והכיבוי ---
 window.addEventListener('load', () => {
-    const canvas = document.getElementById('starsCanvas');
-    
-    // המתנה של 3 שניות (3000 מילישניות)
     setTimeout(() => {
-        canvas.style.opacity = '0'; // גורם לדהייה
+        isEffectActive = false; // 1. מפסיק ליצור כוכבים חדשים מהעכבר
+        canvas.style.opacity = '0'; // 2. מתחיל דהייה ויזואלית (דורש opacity transition ב-CSS)
         
-        // אופציונלי: מחיקה מוחלטת מהדף אחרי שהדהייה מסתיימת כדי לחסוך במשאבי מעבד
         setTimeout(() => {
-            canvas.style.display = 'none';
-        }, 2000); // 2000 כאן זה זמן הדהייה שהגדרנו ב-CSS
-    }, 3000);
+            canvas.style.display = 'none'; // 3. מעלים לגמרי אחרי שהדהייה נגמרה
+        }, 2000); 
+    }, 3000); // קורה אחרי 3 שניות מהטעינה
 });
