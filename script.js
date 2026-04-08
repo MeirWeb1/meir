@@ -51,13 +51,14 @@ function showCanvas() {
 }
 
 function startFade() {
+    // 1. הדהייה מתחילה דרך ה-CSS (הקנבס נשאר על המסך אבל נהיה שקוף)
     canvas.style.opacity = '0';
-    // איפוס מיידי של המערך כדי שה-animate לא יצייר כלום יותר
-    particles = []; 
-    // ניקוי פיזי של כל הקנבס כדי שלא יישאר "צל"
+    
+    // 2. רק אחרי שהדהייה ב-CSS מסתיימת (1.5 שניות), ננקה את הקנבס
     setTimeout(() => {
+        particles = []; 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }, 100); 
+    }, 1500); // הזמן חייב להיות זהה ל-transition ב-CSS שלך
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -83,26 +84,25 @@ window.addEventListener('mousemove', (e) => {
 });
 
 function animate() {
-    if (particles.length > 0) {
-        ctx.fillStyle = 'rgba(3, 7, 18, 0.15)'; // השובל שיוצר את ה"היסטוריה" הקצרה
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // אנחנו תמיד נצייר את השובל, גם כשה-opacity יורד, 
+    // כדי שמה שכבר צויר ימשיך להיעלם בהדרגה בתוך ה-Canvas
+    
+    ctx.fillStyle = 'rgba(3, 7, 18, 0.15)'; 
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
         
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-            
-            if (particles[i].size <= 0.2) {
-                particles.splice(i, 1);
-                i--;
-            }
+        if (particles[i].size <= 0.2) {
+            particles.splice(i, 1);
+            i--;
         }
-    } else {
-        // מונע מה"כתמים" להיתקע כשהעכבר נעצר
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
     
     requestAnimationFrame(animate);
 }
+
 
 // הפעלת האנימציה לראשונה
 animate();
