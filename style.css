@@ -188,16 +188,27 @@ header {
 }
 
 .btn-primary {
+    display: inline-block;
     background: var(--cyan);
     color: var(--bg);
     border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.2; /* שומר על מרווח נכון בין שורת הטקסט למחיר */
+    text-align: center; /* מוודא שהטקסט והמחיר יהיו במרכז הכפתור */
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
 }
 
 .btn-primary:hover {
     background: white;
     transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
 }
-
 .btn-secondary {
     background: transparent;
     border: 1px solid var(--border-glass);
