@@ -10,9 +10,8 @@ canvas.height = windowHeight;
 
 let particles = [];
 const mouse = { x: null, y: null };
-let isEffectActive = true; // משתנה ששולט אם האפקט פעיל
+let isEffectActive = true; 
 
-// עדכון גודל קנבס
 window.addEventListener('resize', () => {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
@@ -20,21 +19,19 @@ window.addEventListener('resize', () => {
     canvas.height = windowHeight;
 });
 
-// יצירת חלקיקים בזמן תזוזה - רק אם האפקט פעיל
 window.addEventListener('mousemove', (e) => {
-    if (!isEffectActive) return; // מפסיק ליצור כוכבים חדשים כשהאפקט כבוי
-    
+    if (!isEffectActive) return; 
     mouse.x = e.x;
     mouse.y = e.y;
-    for (let i = 0; i < 1; i++) {
-        particles.push(new Particle());
-    }
+    // מוסיף חלקיק אחד בכל תזוזה
+    particles.push(new Particle(mouse.x, mouse.y));
 });
 
 class Particle {
-    constructor() {
-        this.x = mouse.x;
-        this.y = mouse.y;
+    constructor(x, y) {
+        // אם לא קיבלנו מיקום, ניצור מיקום רנדומלי (לכוכבי רקע)
+        this.x = x || Math.random() * canvas.width;
+        this.y = y || Math.random() * canvas.height;
         this.size = Math.random() * 2 + 0.5;
         this.speedX = (Math.random() - 0.5) * 1.5;
         this.speedY = (Math.random() - 0.5) * 1.5;
@@ -57,19 +54,12 @@ class Particle {
 }
 
 function animate() {
-    // ניקוי הקנבס
     ctx.fillStyle = 'rgba(3, 7, 18, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // 1. יצירת כוכבי רקע באופן קבוע (גם כשלא מזיזים עכבר)
-    // הגדלתי את הסיכוי כדי שיהיו יותר כוכבים תמיד
-    if (isEffectActive && Math.random() > 0.6) { 
-        particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
-    }
-
-    // 2. יצירת כוכבים סביב העכבר (רק אם העכבר זז)
-    if (isEffectActive && mouse.x !== null) {
-        particles.push(new Particle(mouse.x, mouse.y));
+    if (isEffectActive && Math.random() > 0.7) { 
+        particles.push(new Particle()); // יוצר כוכב במיקום רנדומלי
     }
 
     for (let i = 0; i < particles.length; i++) {
@@ -82,16 +72,12 @@ function animate() {
         }
     }
     
+    // ממשיך את הלופ רק אם האפקט פעיל או שיש עדיין חלקיקים שצריכים להיעלם
     if (isEffectActive || particles.length > 0) {
         requestAnimationFrame(animate);
     }
 }
-    
-    // ממשיך את הלופ רק אם יש עדיין חלקיקים לצייר או שהאפקט פעיל
-    if (isEffectActive || particles.length > 0) {
-        requestAnimationFrame(animate);
-    }
-}
+
 animate();
 
 // --- פונקציות ממשק ---
@@ -101,7 +87,8 @@ function scrollToContact() {
     if (contactSection) {
         contactSection.scrollIntoView({ behavior: 'smooth' });
         setTimeout(() => {
-            document.getElementById('userName').focus();
+            const userNameField = document.getElementById('userName');
+            if(userNameField) userNameField.focus();
         }, 800);
     }
 }
@@ -126,11 +113,11 @@ function sendToWhatsApp() {
 // --- מנגנון הדהייה והכיבוי ---
 window.addEventListener('load', () => {
     setTimeout(() => {
-        isEffectActive = false; // 1. מפסיק ליצור כוכבים חדשים מהעכבר
-        canvas.style.opacity = '0'; // 2. מתחיל דהייה ויזואלית (דורש opacity transition ב-CSS)
+        isEffectActive = false; // מפסיק יצירת כוכבים חדשים
+        canvas.style.opacity = '0'; // דהייה ויזואלית
         
         setTimeout(() => {
-            canvas.style.display = 'none'; // 3. מעלים לגמרי אחרי שהדהייה נגמרה
+            canvas.style.display = 'none'; // העלמה מוחלטת מה-DOM
         }, 2000); 
-    }, 3000); // קורה אחרי 3 שניות מהטעינה
+    }, 3000);
 });
