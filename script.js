@@ -112,3 +112,18 @@ function sendToWhatsApp() {
     // פתיחת וואטסאפ בחלון חדש
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
 }
+
+// פונקציה שמתבצעת ברגע שהדף מסיים להיטען
+window.addEventListener('load', () => {
+    const canvas = document.getElementById('starsCanvas');
+    
+    // המתנה של 3 שניות (3000 מילישניות)
+    setTimeout(() => {
+        canvas.style.opacity = '0'; // גורם לדהייה
+        
+        // אופציונלי: מחיקה מוחלטת מהדף אחרי שהדהייה מסתיימת כדי לחסוך במשאבי מעבד
+        setTimeout(() => {
+            canvas.style.display = 'none';
+        }, 2000); // 2000 כאן זה זמן הדהייה שהגדרנו ב-CSS
+    }, 3000);
+});
