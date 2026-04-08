@@ -19,34 +19,55 @@ window.addEventListener('resize', () => {
     canvas.height = windowHeight;
 });
 
+// --- הגדרת החלקיק (Particle) ---
+class Particle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 1.5;
+        this.speedY = (Math.random() - 0.5) * 1.5;
+        this.color = `rgba(34, 211, 238, ${Math.random() * 0.7 + 0.3})`;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.1) this.size -= 0.03;
+    }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = "rgba(34, 211, 238, 0.5)";
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+}
+
 // פונקציות עזר לאפקט
 function showCanvas() {
     canvas.style.opacity = '1';
-    canvas.style.display = 'block';
 }
-
-// ... (הגדרות בסיסיות נשארות אותו דבר)
 
 function startFade() {
     canvas.style.opacity = '0';
-    
     // איפוס מיידי של המערך כדי שה-animate לא יצייר כלום יותר
     particles = []; 
-    
     // ניקוי פיזי של כל הקנבס כדי שלא יישאר "צל"
     setTimeout(() => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }, 100); // ניקוי מהיר מאוד מיד אחרי תחילת הדהייה
+    }, 100); 
 }
 
 window.addEventListener('mousemove', (e) => {
     // אם האפקט חוזר מדהייה, מנקים הכל כדי להתחיל דף חלק
-    if (parseFloat(canvas.style.opacity) < 0.1) {
+    if (parseFloat(canvas.style.opacity || 0) < 0.1) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles = [];
     }
 
-    canvas.style.opacity = '1';
+    showCanvas();
     mouse.x = e.x;
     mouse.y = e.y;
     
@@ -62,9 +83,8 @@ window.addEventListener('mousemove', (e) => {
 });
 
 function animate() {
-    // אם אין חלקיקים והאפקט בדהייה, אין טעם לצייר "שובלים" של רקע
     if (particles.length > 0) {
-        ctx.fillStyle = 'rgba(3, 7, 18, 0.15)'; // השובל השחור
+        ctx.fillStyle = 'rgba(3, 7, 18, 0.15)'; // השובל שיוצר את ה"היסטוריה" הקצרה
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         for (let i = 0; i < particles.length; i++) {
@@ -77,16 +97,17 @@ function animate() {
             }
         }
     } else {
-        // אם המערך ריק, אנחנו מוודאים שהקנבס נקי לגמרי
-        // זה מונע מה"היסטוריה" להיתקע
+        // מונע מה"כתמים" להיתקע כשהעכבר נעצר
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
     
     requestAnimationFrame(animate);
 }
 
-// --- פונקציות ממשק ---
+// הפעלת האנימציה לראשונה
+animate();
 
+// --- פונקציות ממשק ---
 function scrollToContact() {
     const contactSection = document.getElementById('contact');
     if (contactSection) {
@@ -105,7 +126,7 @@ function sendToWhatsApp() {
     
     if (name === "") {
         nameInput.style.borderColor = "#ef4444";
-        alert("נא להזין שם כדי שנדע איך לקרוא לך הודעה וואטסאפ :)");
+        alert("נא להזין שם כדי שנדע איך לקרוא לך :)");
         return;
     }
     
