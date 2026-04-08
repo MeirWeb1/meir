@@ -25,27 +25,28 @@ function showCanvas() {
     canvas.style.display = 'block';
 }
 
+// ... (הגדרות בסיסיות נשארות אותו דבר)
+
 function startFade() {
     canvas.style.opacity = '0';
     
-    // ניקוי הקנבס מהזיכרון רק אחרי שהאפקט הוויזואלי נגמר
+    // איפוס מיידי של המערך כדי שה-animate לא יצייר כלום יותר
+    particles = []; 
+    
+    // ניקוי פיזי של כל הקנבס כדי שלא יישאר "צל"
     setTimeout(() => {
-        // בודקים שוב שאנחנו עדיין ב-opacity 0 כדי לא למחוק מוקדם מדי
-        if (canvas.style.opacity === '0') {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles = [];
-        }
-    }, 1500); // תואם לזמן ב-CSS (1.5s)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 100); // ניקוי מהיר מאוד מיד אחרי תחילת הדהייה
 }
 
-// לוגיקת תנועת העכבר
 window.addEventListener('mousemove', (e) => {
-    // אם האפקט כבוי, מנקים את המערך כדי למנוע שאריות
-    if (canvas.style.opacity === '0' || canvas.style.display === 'none') {
+    // אם האפקט חוזר מדהייה, מנקים הכל כדי להתחיל דף חלק
+    if (parseFloat(canvas.style.opacity) < 0.1) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles = [];
     }
-    
-    showCanvas();
+
+    canvas.style.opacity = '1';
     mouse.x = e.x;
     mouse.y = e.y;
     
@@ -54,54 +55,35 @@ window.addEventListener('mousemove', (e) => {
         particles.push(new Particle(mouse.x, mouse.y));
     }
 
-    // רענון טיימר הדהייה
     clearTimeout(fadeTimeout);
     fadeTimeout = setTimeout(() => {
         startFade();
-    }, 1000); // האפקט יתחיל לדעוך שנייה אחת אחרי הפסקת התנועה
+    }, 1000); 
 });
 
-class Particle {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 1.5;
-        this.speedY = (Math.random() - 0.5) * 1.5;
-        this.color = `rgba(34, 211, 238, ${Math.random() * 0.7 + 0.3})`;
-    }
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.size > 0.1) this.size -= 0.03;
-    }
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.shadowBlur = 5;
-        ctx.shadowColor = "rgba(34, 211, 238, 0.5)";
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-    }
-}
-
 function animate() {
-    ctx.fillStyle = 'rgba(3, 7, 18, 0.15)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
+    // אם אין חלקיקים והאפקט בדהייה, אין טעם לצייר "שובלים" של רקע
+    if (particles.length > 0) {
+        ctx.fillStyle = 'rgba(3, 7, 18, 0.15)'; // השובל השחור
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        if (particles[i].size <= 0.2) {
-            particles.splice(i, 1);
-            i--;
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            
+            if (particles[i].size <= 0.2) {
+                particles.splice(i, 1);
+                i--;
+            }
         }
+    } else {
+        // אם המערך ריק, אנחנו מוודאים שהקנבס נקי לגמרי
+        // זה מונע מה"היסטוריה" להיתקע
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+    
     requestAnimationFrame(animate);
 }
-animate();
 
 // --- פונקציות ממשק ---
 
