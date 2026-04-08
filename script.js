@@ -58,17 +58,34 @@ class Particle {
 
 function animate() {
     // ניקוי הקנבס
-    ctx.fillStyle = 'rgba(3, 7, 18, 0.1)';
+    ctx.fillStyle = 'rgba(3, 7, 18, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    // 1. יצירת כוכבי רקע באופן קבוע (גם כשלא מזיזים עכבר)
+    // הגדלתי את הסיכוי כדי שיהיו יותר כוכבים תמיד
+    if (isEffectActive && Math.random() > 0.6) { 
+        particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+    }
+
+    // 2. יצירת כוכבים סביב העכבר (רק אם העכבר זז)
+    if (isEffectActive && mouse.x !== null) {
+        particles.push(new Particle(mouse.x, mouse.y));
+    }
+
     for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
+        
         if (particles[i].size <= 0.2) {
             particles.splice(i, 1);
             i--;
         }
     }
+    
+    if (isEffectActive || particles.length > 0) {
+        requestAnimationFrame(animate);
+    }
+}
     
     // ממשיך את הלופ רק אם יש עדיין חלקיקים לצייר או שהאפקט פעיל
     if (isEffectActive || particles.length > 0) {
