@@ -27,11 +27,15 @@ function showCanvas() {
 
 function startFade() {
     canvas.style.opacity = '0';
-    // אחרי סיום הדהייה, מנקים פיזית את הקנבס ומרוקנים את רשימת הכוכבים
+    
+    // ניקוי הקנבס מהזיכרון רק אחרי שהאפקט הוויזואלי נגמר
     setTimeout(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles = []; 
-    }, 1000); // 1000ms תואם ל-transition ב-CSS
+        // בודקים שוב שאנחנו עדיין ב-opacity 0 כדי לא למחוק מוקדם מדי
+        if (canvas.style.opacity === '0') {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = [];
+        }
+    }, 1500); // תואם לזמן ב-CSS (1.5s)
 }
 
 // לוגיקת תנועת העכבר
